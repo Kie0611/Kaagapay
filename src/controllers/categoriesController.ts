@@ -1,3 +1,3 @@
-export const getAllCategories = async () => {
-
+export const getCategoriesWithCount = async () => {
+  
 }

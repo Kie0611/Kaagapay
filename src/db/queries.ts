@@ -1,3 +1,4 @@
+import { resourceLimits } from "node:worker_threads";
 import { db } from "./index";
 import {
   resources,
@@ -10,7 +11,7 @@ import {
   type Cost,
   type Status
 } from "./schema";
-import { eq, and, ilike, SQL } from "drizzle-orm";
+import { eq, and, ilike, SQL, count, countDistinct } from "drizzle-orm";
 
 export interface GetResourcesFilters {
   category?: Category;
@@ -20,7 +21,7 @@ export interface GetResourcesFilters {
   q?: string; // keyword search on name
 }
  
-// Resources 
+// Resources - Public
  
 export async function getAllResources(filters: GetResourcesFilters = {}) {
   const conditions: SQL[] = [
@@ -59,3 +60,142 @@ export async function getResourceById(id: string) {
   return resource;
 };
 
+// Resources - Admin
+
+export async function createResource(data: NewResource) {
+  const [resource] = await db.insert(resources).values(data).returning();
+  return resource;
+};
+
+export async function updateResource(id: string, data: Partial<NewResource>) {
+  const [resource] = await db
+    .update(resources)
+    .set({
+      ...data,
+      updatedAt: new Date()
+    })
+    .where(eq(resources.id, id))
+    .returning();
+
+  return resource;
+};
+
+export async function updateResourceStatus(status: Status, id: string) {
+  const [resource] = await db
+    .update(resources)
+    .set({
+      status,
+      updatedAt: new Date()
+    })
+    .where(eq(resources.id, id))
+    .returning();
+
+  return resource;
+};
+
+// Categories
+
+export async function getCategoriesWithCount() {
+  return db
+    .select({
+      category: resources.category,
+      count: count(),
+    })
+    .from(resources)
+    .where(eq(resources.status, "active"))
+    .groupBy(resources.category);
+};
+
+
+// Submissions - Public
+
+export async function createSubmission(data: NewSubmission) {
+  const [submission] = await db.insert(submissions).values(data).returning();
+  return submission;
+};
+
+// Submissions - Admin
+
+export async function getPendingSubmissions() {
+  return db
+    .select()
+    .from(submissions)
+    .where(eq(submissions.status, "pending"))
+    .orderBy(submissions.createdAt);
+};
+
+export async function updateSubmissionStatus(id: string, status: Status) {
+  const [submission] = await db
+    .update(submissions)
+    .set({
+      status,
+      reviewedAt: new Date()
+    })
+    .where(eq(submissions.id, id))
+    .returning()
+
+  return submission;
+}
+
+// Admin
+
+export async function getAdminResources() {
+  return db.select().from(resources).orderBy(resources.createdAt);
+};
+
+export async function getAdminStats() {
+  const [resourceStats] = await db
+    .select({
+      totalResources: count(),
+      categoriesCount: countDistinct(resources.category),
+      barangaysCount: countDistinct(resources.barangay),
+    })
+    .from(resources)
+    .where(eq(resources.status, "active"));
+
+  const [submissionStats] = await db
+    .select({ pendingSubmissions: count() })
+    .from(submissions)
+    .where(eq(submissions.status, "pending"));
+
+  return {
+    totalResources:     resourceStats.totalResources,
+    pendingSubmissions: submissionStats.pendingSubmissions,
+    categoriesCount:    resourceStats.categoriesCount,
+    barangaysCount:     resourceStats.barangaysCount,
+  };
+}
+
+export async function approveSubmission(id: string) {
+  const [submission] = await db
+    .select()
+    .from(submissions)
+    .where(eq(submissions.id, id))
+    .limit(1);
+ 
+  if (!submission) return null;
+ 
+  const [resource] = await db
+    .insert(resources)
+    .values({
+      name:         submission.name,
+      organization: submission.organization,
+      category:     submission.category,
+      address:      submission.address,
+      barangay:     submission.barangay,
+      phone:        submission.phone,
+      hours:        submission.hours,
+      cost:         submission.cost,
+      description:  submission.description,
+      status:       "approved",
+      verified:     false, 
+    })
+    .returning();
+ 
+  await db
+    .update(submissions)
+    .set({ status: "active", reviewedAt: new Date() })
+    .where(eq(submissions.id, id));
+ 
+  return resource;
+}

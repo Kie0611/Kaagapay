@@ -33,6 +33,7 @@ export const statusEnum = pgEnum("status_type", [
   "active",
   "inactive",
   "pending",
+  "approved",
   "rejected",
 ]);
 
