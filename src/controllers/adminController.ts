@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import * as queries from "../db/queries";
 import { createResourceSchema } from "../types/resource.schema";
-import { ResourceParams } from "../types/resource.types";
 
 export const login = (req:Request, res:Response) => {
   const { username, password } = req.body;
@@ -73,7 +72,7 @@ export const getDashboardStats = async (req:Request, res:Response) => {
   }
 };
 
-export const updateResource = async (req:Request<ResourceParams>, res:Response) => {
+export const updateResource = async (req:Request<{ id: string }>, res:Response) => {
   try {
     const { id } = req.params;
     const result = createResourceSchema.partial().safeParse(req.body);
@@ -99,7 +98,7 @@ export const updateResource = async (req:Request<ResourceParams>, res:Response) 
 };
 
 
-export const approveSubmission = async (req:Request<ResourceParams>, res:Response) => {
+export const approveSubmission = async (req:Request<{ id: string }>, res:Response) => {
   try {
     const { id } = req.params;
     
@@ -114,7 +113,7 @@ export const approveSubmission = async (req:Request<ResourceParams>, res:Respons
   }
 };
 
-export const rejectSubmission = async (req:Request<ResourceParams>, res:Response) => {
+export const rejectSubmission = async (req:Request<{ id: string }>, res:Response) => {
   try {
     const { id } = req.params;
 

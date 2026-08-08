@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import * as queries from "../db/queries"
 import { Category, Cost } from "../db/schema";
-import { ResourceParams } from "../types/resource.types";
 
 export const getAllResources = async (req: Request, res: Response) => {
   try {
@@ -22,7 +21,7 @@ export const getAllResources = async (req: Request, res: Response) => {
   }
 };
 
-export const getResourceById = async (req: Request<ResourceParams>, res: Response) => {
+export const getResourceById = async (req: Request<{ id: string }>, res: Response) => {
   try {
     const { id } = req.params;
     const resource = await queries.getResourceById(id);

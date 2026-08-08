@@ -1,31 +1,30 @@
 import express from "express";
 import {
   login,
-  getAllResources,
+  getAdminResources,
   createResource,
   getPendingSubmissions,
   getDashboardStats,
   updateResource,
-  toggleResourceStatus,
   approveSubmission,
   rejectSubmission,
 } from "../controllers/adminController";
+import { requireAuth } from "../middleware/auth";
 
 const router = express.Router();
 
 router.post("/login", login);
 
-router.get("/resources", getAllResources);
-router.post("/resources", createResource);
+router.get("/resources", requireAuth, getAdminResources);
+router.post("/resources", requireAuth, createResource);
 
-router.get("/submissions", getPendingSubmissions);
+router.get("/submissions", requireAuth, getPendingSubmissions);
 
-router.get("/stats", getDashboardStats);
+router.get("/stats", requireAuth, getDashboardStats);
 
-router.patch("/resources/:id/status", toggleResourceStatus);
-router.put("/resources/:id", updateResource);
+router.put("/resources/:id", requireAuth, updateResource);
 
-router.patch("/submissions/:id/approve", approveSubmission);
-router.patch("/submissions/:id/reject", rejectSubmission);
+router.patch("/submissions/:id/approve", requireAuth, approveSubmission);
+router.patch("/submissions/:id/reject", requireAuth, rejectSubmission);
 
 export default router;

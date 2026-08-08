@@ -6,7 +6,7 @@ import { ENV } from "./config/env";
 import adminRoute from "./routes/adminRoutes";
 import resourcesRoutes from "./routes/resourcesRoutes";
 import categoriesRoutes from "./routes/categoriesRoutes";
-import submissionRoutes from "./routes/submissionRoutes";
+import submissionRoutes from "./routes/submissionsRoutes";
 
 const app = express();
 
@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true })); // parses form data (like HTML 
 app.use("/api/admin", adminRoute);
 app.use("/api/resources", resourcesRoutes);
 app.use("/api/categories", categoriesRoutes);
-app.use("/api/submission", submissionRoutes);
+app.use("/api/submissions", submissionRoutes);
 
 app.listen(ENV.PORT, () => {
   console.log("Server is running at port:", ENV.PORT);
