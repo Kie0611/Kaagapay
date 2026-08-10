@@ -8,6 +8,7 @@ import {
   updateResource,
   approveSubmission,
   rejectSubmission,
+  updateResourceStatus,
 } from "../controllers/adminController";
 import { requireAuth } from "../middleware/auth";
 
@@ -23,6 +24,8 @@ router.get("/submissions", requireAuth, getPendingSubmissions);
 router.get("/stats", requireAuth, getDashboardStats);
 
 router.put("/resources/:id", requireAuth, updateResource);
+
+router.patch("/resources/:id/status", requireAuth, updateResourceStatus);
 
 router.patch("/submissions/:id/approve", requireAuth, approveSubmission);
 router.patch("/submissions/:id/reject", requireAuth, rejectSubmission);

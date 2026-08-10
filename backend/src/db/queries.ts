@@ -80,7 +80,7 @@ export async function updateResource(id: string, data: Partial<NewResource>) {
   return resource;
 };
 
-export async function updateResourceStatus(status: Status, id: string) {
+export async function updateResourceStatus(id: string, status: Status) {
   const [resource] = await db
     .update(resources)
     .set({

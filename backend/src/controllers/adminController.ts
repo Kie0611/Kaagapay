@@ -97,6 +97,23 @@ export const updateResource = async (req:Request<{ id: string }>, res:Response) 
   }
 };
 
+export const updateResourceStatus = async (req:Request<{ id: string }>, res:Response) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const existingResource = await queries.getResourceById(id);
+
+    if (!existingResource) return res.status(404).json({ error: "Resource not found" });
+
+    const resource = await queries.updateResourceStatus(id, status);
+
+    res.status(200).json(resource);
+  } catch (error) {
+    console.log("Failed to update resource status:", error);
+    return res.status(500).json({ error: "Error updating resource status" });
+  }
+}
 
 export const approveSubmission = async (req:Request<{ id: string }>, res:Response) => {
   try {
