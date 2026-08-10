@@ -26,6 +26,11 @@ export async function putAdminResource(id: string, data: Partial<Resource>) {
   return resource;
 }
 
+export async function patchResourceStatus(id: string, status: string) {
+  const { data } = await apiClient.patch<Resource>(`/admin/resources/${id}/status`, { status });
+  return data;
+}
+
 export async function fetchAdminSubmissions() {
   const { data } = await apiClient.get<Submission[]>("/admin/submissions");
   return data;
