@@ -8,14 +8,14 @@ import type { ResourceFilters } from "../types/resource.types";
 
 export function useResources(filters: ResourceFilters = {}) {
   return useQuery({
-    queryKey: ["resource", filters],
+    queryKey: ["resources", filters],
     queryFn: () => fetchResources(filters), // () => means like do this later when you need to fetch data
   });
 }
 
 export function useResource(id: string) {
   return useQuery({
-    queryKey: ["resources", id],
+    queryKey: ["resource", id],
     queryFn: () => fetchResourceById(id),
     enabled: !!id, // !! Only execute the query when id exists (converts it to boolean)
   });
