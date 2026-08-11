@@ -78,6 +78,7 @@ export function useUpdateResourceStatus() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "resources"] });
       queryClient.invalidateQueries({ queryKey: ["admin", "stats"] });
+      queryClient.invalidateQueries({ queryKey: ["resources"] });
     },
   });
 }
@@ -91,6 +92,7 @@ export function useApproveSubmission() {
       queryClient.invalidateQueries({ queryKey: ["admin", "submissions"] });
       queryClient.invalidateQueries({ queryKey: ["admin", "resources"] });
       queryClient.invalidateQueries({ queryKey: ["admin", "stats"] });
+      queryClient.invalidateQueries({ queryKey: ["resources"] });
     },
   });
 }
