@@ -1,0 +1,49 @@
+{
+  "nav": {
+    "home": "Home",
+    "resources": "Mga Serbisyo",
+    "about": "Tungkol Sa Amin",
+    "contact": "Makipag-ugnayan",
+    "submit": "Mag-submit ng Resource"
+  },
+  "hero": {
+    "title": "Hanapin ang tulong na kailangan mo ngayon",
+    "subtitle": "Libre at verified na listahan ng mga social services, health centers, at government programs sa Silang, Cavite at buong Region 4A.",
+    "cta_search": "Maghanap ng Tulong",
+    "cta_learn": "Alamin ang Higit Pa"
+  },
+  "search": {
+    "placeholder": "Hanapin ang serbisyo... (e.g. libreng gamot, legal aid)",
+    "category_all": "Lahat ng kategorya",
+    "location_all": "Buong Region 4A",
+    "button": "Hanapin"
+  },
+  "categories": {
+    "title": "Mga Kategorya",
+    "view_all": "Tingnan lahat →",
+    "kalusugan": "Kalusugan",
+    "legal_aid": "Legal Aid",
+    "pagkain": "Pagkain at Relief",
+    "kabuhayan": "Kabuhayan",
+    "mental_health": "Mental Health",
+    "edukasyon": "Edukasyon",
+    "pabahay": "Pabahay",
+    "pamilya": "Bata at Pamilya"
+  },
+  "card": {
+    "call": "Tumawag",
+    "directions": "Direksyon",
+    "libre": "Libre",
+    "may_bayad": "May bayad",
+    "depende": "Depende",
+    "verified": "Verified"
+  },
+  "submit": {
+    "banner_title": "Alam mo ba ang isang serbisyong wala pa kami?",
+    "banner_body": "Mag-ambag ng impormasyon para matulungan ang iyong kapwa. Bawat entry ay sinusuri bago i-publish.",
+    "banner_cta": "Mag-submit ng Resource"
+  },
+  "footer": {
+    "tagline": "Kasama, Konektado, Para sa Lahat"
+  }
+}

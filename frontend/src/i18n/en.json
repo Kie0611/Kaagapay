@@ -1,0 +1,49 @@
+{
+  "nav": {
+    "home": "Home",
+    "resources": "Resources",
+    "about": "About",
+    "contact": "Contact",
+    "submit": "Submit a Resource"
+  },
+  "hero": {
+    "title": "Find the help you need, right now",
+    "subtitle": "Free, verified directory of social services, health centers, and government programs in Silang, Cavite and Region 4A.",
+    "cta_search": "Search for Help",
+    "cta_learn": "Learn More"
+  },
+  "search": {
+    "placeholder": "Search for a service... (e.g. free medicine, legal aid)",
+    "category_all": "All categories",
+    "location_all": "All of Region 4A",
+    "button": "Search"
+  },
+  "categories": {
+    "title": "Categories",
+    "view_all": "View all →",
+    "kalusugan": "Health",
+    "legal_aid": "Legal Aid",
+    "pagkain": "Food & Relief",
+    "kabuhayan": "Livelihood",
+    "mental_health": "Mental Health",
+    "edukasyon": "Education",
+    "pabahay": "Housing",
+    "pamilya": "Children & Family"
+  },
+  "card": {
+    "call": "Call",
+    "directions": "Directions",
+    "libre": "Free",
+    "may_bayad": "With fee",
+    "depende": "Depends",
+    "verified": "Verified"
+  },
+  "submit": {
+    "banner_title": "Know a resource we don't have?",
+    "banner_body": "Help your community by adding it. Every entry is reviewed before publishing.",
+    "banner_cta": "Submit a Resource"
+  },
+  "footer": {
+    "tagline": "Together, Connected, For Everyone"
+  }
+}
