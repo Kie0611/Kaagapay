@@ -105,7 +105,7 @@ export const resourceSchema = z.object({
   lat:             z.coerce.number().min(-90).max(90),
   lng:             z.coerce.number().min(-180).max(180),
   submitter_name:  z.string().max(120).optional().or(z.literal("")),
-  submitter_email: z.string().email("Invalid email address.").optional().or(z.literal("")),
+  submitter_email: z.email("Invalid email address.").optional().or(z.literal("")),
 });
 
 export type ResourceInput = z.infer<typeof resourceSchema>;
