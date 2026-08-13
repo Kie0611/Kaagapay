@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 
-import { HomePage } from "@/routes/index";
-import { ResourcesPage } from "@/routes/resources.index";
-import { ResourceDetailPage } from "@/routes/resources.$id";
-import { SubmitPage } from "@/routes/submit";
-import { AdminPage }  from "@/routes/admin";
-import { AboutPage, ContactPage } from "@/routes/about-contact";
+import { HomePage } from "@/routes/HomePage";
+import { ResourcesPage } from "@/routes/ResourcesPage";
+import { ResourceDetailPage } from "@/routes/ResourceDetailPage";
+import { SubmitPage } from "@/routes/SubmitPage";
+import { AdminPage } from "@/routes/AdminPage";
+import { AboutPage, ContactPage } from "@/routes/AboutContactPage";
 
 export default function App() {
   return (

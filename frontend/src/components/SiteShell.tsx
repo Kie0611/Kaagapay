@@ -92,7 +92,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
   );
 }
 
-// ─── Sun watermark ────────────────────────────────────────────────────────────
+// Sun watermark 
 
 function round(n: number) {
   return Math.round(n * 100) / 100;

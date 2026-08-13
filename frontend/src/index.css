@@ -1,89 +1,86 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    /* Philippine flag palette */
-    --navy:       #0b2d6e;
-    --red:        #ce1127;
-    --gold:       #f7a800;
- 
-    /* Semantic tokens */
-    --background:        #f4f6fa;
-    --foreground:        #1a1a2e;
-    --card:              #ffffff;
-    --card-foreground:   #1a1a2e;
-    --border:            #e5e7eb;
-    --muted-foreground:  #6b7280;
-    --secondary:         #f0f2f7;
-    --destructive:       #b91c1c;
-    --primary-foreground:#ffffff;
- 
-    --radius: 0.75rem;
-  }
- 
-  body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  }
+@theme {
+  /* Philippine flag palette */
+  --color-navy:     #0b2d6e;
+  --color-red:      #ce1127;
+  --color-gold:     #f7a800;
+
+  /* Semantic colors — these become bg-background, text-foreground, etc. */
+  --color-background:       #f4f6fa;
+  --color-foreground:       #1a1a2e;
+  --color-card:             #ffffff;
+  --color-card-foreground:  #1a1a2e;
+  --color-border:           #e5e7eb;
+  --color-muted-foreground: #6b7280;
+  --color-secondary:        #f0f2f7;
+  --color-destructive:      #b91c1c;
+  --color-primary-foreground: #ffffff;
 }
- 
+
 /* Flag stripe */
 .flag-stripe {
   height: 4px;
   background: linear-gradient(
     to right,
-    var(--navy)  0%    33.3%,
-    var(--red)   33.3% 66.6%,
-    var(--gold)  66.6% 100%
+    #0b2d6e 0%    33.3%,
+    #ce1127 33.3% 66.6%,
+    #f7a800 66.6% 100%
   );
 }
- 
-/* Utility classes */
+
+/* Custom utilities */
 @layer utilities {
-  .text-navy      { color: var(--navy); }
-  .bg-navy        { background-color: var(--navy); }
-  .text-gold      { color: var(--gold); }
-  .bg-gold        { background-color: var(--gold); }
-  .bg-kaagapay-red{ background-color: var(--red); }
-  .border-navy    { border-color: var(--navy); }
-  .gradient-navy  {
-    background: linear-gradient(135deg, var(--navy) 0%, #1a3d8a 100%);
+  .gradient-navy {
+    background: linear-gradient(135deg, #0b2d6e 0%, #1a3d8a 100%);
   }
-  .shadow-card    { box-shadow: 0 1px 4px 0 rgb(0 0 0 / .06); }
+  .shadow-card {
+    box-shadow: 0 1px 4px 0 rgb(0 0 0 / 0.06);
+  }
   .card-lift {
-    transition: transform .15s, box-shadow .15s, border-color .15s;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
   }
   .card-lift:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgb(11 45 110 / .10);
-    border-color: var(--navy);
+    box-shadow: 0 6px 20px rgb(11 45 110 / 0.10);
+    border-color: #0b2d6e;
+  }
+  .bg-kaagapay-red {
+    background-color: #ce1127;
   }
 }
- 
-/* Category badges */
 
+/* Category badges */
 @layer components {
   .cat-badge {
-    @apply inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold
-           uppercase tracking-wide whitespace-nowrap;
+    display: inline-block;
+    border-radius: 9999px;
+    padding: 2px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
   }
-  .cat-health        { @apply bg-blue-50   text-blue-800; }
-  .cat-legal_aid     { @apply bg-amber-50  text-amber-800; }
-  .cat-food_relief   { @apply bg-emerald-50 text-emerald-800; }
-  .cat-livelihood    { @apply bg-purple-50 text-purple-800; }
-  .cat-mental_health { @apply bg-red-50    text-red-800; }
-  .cat-education     { @apply bg-violet-50 text-violet-800; }
-  .cat-housing       { @apply bg-orange-50 text-orange-800; }
-  .cat-family        { @apply bg-sky-50    text-sky-800; }
+  .cat-health        { background: #eff6ff; color: #1e40af; }
+  .cat-legal_aid     { background: #fffbeb; color: #92400e; }
+  .cat-food_relief   { background: #ecfdf5; color: #065f46; }
+  .cat-livelihood    { background: #f5f3ff; color: #4c1d95; }
+  .cat-mental_health { background: #fef2f2; color: #991b1b; }
+  .cat-education     { background: #f5f3ff; color: #5b21b6; }
+  .cat-housing       { background: #fff7ed; color: #9a3412; }
+  .cat-family        { background: #eff6ff; color: #1e3a8a; }
 }
- 
-/*  Leaflet overrides */
+
+/* Leaflet overrides */
 .leaflet-container {
   font-family: 'Inter', system-ui, sans-serif;
-  border-radius: var(--radius);
+  border-radius: 12px;
 }
 .leaflet-popup-content-wrapper {
   border-radius: 10px;
-  box-shadow: 0 4px 20px rgb(0 0 0 / .12);
+  box-shadow: 0 4px 20px rgb(0 0 0 / 0.12);
 }
-.leaflet-popup-tip { display: none; }
+.leaflet-popup-tip {
+  display: none;
+}
