@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { categoryPinColor, mapsUrl, SILANG_CENTER } from "../lib/kaagapay";
-import type { Resource } from "../lib/kaagapay";
+import { categoryPinColor, mapsUrl, SILANG_CENTER } from "@/lib/kaagapay";
+import type { Resource } from "@/lib/kaagapay";
 
 interface ResourceMapProps {
   resources: Resource[];

@@ -1,11 +1,12 @@
-import { Link } from "@tanstack/react-router";
+import { Link, NavLink } from "react-router-dom";
 import type { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 const NAV = [
-  { to: "/",         label: "Home"      },
-  { to: "/resources",label: "Resources" },
-  { to: "/about",    label: "About"     },
-  { to: "/contact",  label: "Contact"   },
+  { to: "/",          label: "Home",      end: true  },
+  { to: "/resources", label: "Resources", end: false },
+  { to: "/about",     label: "About",     end: false },
+  { to: "/contact",   label: "Contact",   end: false },
 ] as const;
 
 export function FlagStripe() {
@@ -16,12 +17,14 @@ export function SiteShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <FlagStripe />
+
       <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4">
+
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <span className="flex size-9 items-center justify-center rounded-xl gradient-navy text-lg">
-              <span className="text-gold">☀</span>
+            <span className="flex size-9 items-center justify-center rounded-xl gradient-navy">
+              <span className="text-lg text-gold">☀</span>
             </span>
             <span className="text-lg font-bold tracking-tight text-navy">Kaagapay</span>
           </Link>
@@ -29,22 +32,30 @@ export function SiteShell({ children }: { children: ReactNode }) {
           {/* Nav links */}
           <nav className="hidden items-center gap-1 md:flex">
             {NAV.map((item) => (
-              <Link
+              <NavLink
                 key={item.to}
                 to={item.to}
-                activeOptions={{ exact: item.to === "/" }}
-                className="rounded-lg px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-navy"
-                activeProps={{ className: "!text-navy bg-secondary" }}
+                end={item.end}
+                className={({ isActive }) =>
+                  cn(
+                    "rounded-lg px-3 py-2 text-sm font-semibold transition-colors",
+                    "hover:bg-secondary hover:text-navy",
+                    isActive
+                      ? "bg-secondary text-navy"
+                      : "text-muted-foreground",
+                  )
+                }
               >
                 {item.label}
-              </Link>
+              </NavLink>
             ))}
           </nav>
 
           {/* CTA */}
           <Link
             to="/submit"
-            className="rounded-lg bg-navy px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-card transition-opacity hover:opacity-90 sm:text-sm"
+            className="rounded-lg bg-navy px-3.5 py-2 text-xs font-semibold
+                       text-white shadow-card transition-opacity hover:opacity-90 sm:text-sm"
           >
             Submit a Resource
           </Link>
@@ -54,18 +65,21 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <main className="flex-1">{children}</main>
 
       <footer className="mt-auto bg-navy">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-10 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-10
+                        sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xl font-bold text-gold">Kaagapay</p>
-            <p className="mt-1 text-sm text-white/70">Kasama, Konektado, Para sa Lahat</p>
+            <p className="mt-1 text-sm text-white/70">
+              Kasama, Konektado, Para sa Lahat
+            </p>
           </div>
           <div className="flex flex-wrap gap-4 text-sm text-white/80">
             {NAV.map((item) => (
-              <Link key={item.to} to={item.to} className="hover:text-gold">
+              <Link key={item.to} to={item.to} className="hover:text-gold transition-colors">
                 {item.label}
               </Link>
             ))}
-            <Link to="/admin" className="hover:text-gold">
+            <Link to="/admin" className="hover:text-gold transition-colors">
               Admin
             </Link>
           </div>
@@ -77,6 +91,8 @@ export function SiteShell({ children }: { children: ReactNode }) {
     </div>
   );
 }
+
+// ─── Sun watermark ────────────────────────────────────────────────────────────
 
 function round(n: number) {
   return Math.round(n * 100) / 100;

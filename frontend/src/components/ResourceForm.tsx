@@ -1,12 +1,11 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { resourceSchema, type ResourceInput, CATEGORIES, BARANGAYS } from "../lib/kaagapay";
-import { cn } from "../lib/utils";
+import { resourceSchema, type ResourceInput, CATEGORIES, BARANGAYS } from "@/lib/kaagapay";
+import { cn } from "@/lib/utils";
 
 interface ResourceFormProps {
   defaultValues?: Partial<ResourceInput>;
-  onSubmit: (data: ResourceInput) => void;
+  onSubmit: (data: any) => void;
   isSubmitting?: boolean;
   submitLabel?: string;
 }
@@ -24,7 +23,7 @@ export function ResourceForm({
     watch,
     formState: { errors },
   } = useForm<ResourceInput>({
-    resolver: zodResolver(resourceSchema),
+    resolver: zodResolver(resourceSchema) as any,
     defaultValues: { cost: "free", ...defaultValues },
   });
 
@@ -32,6 +31,7 @@ export function ResourceForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+
       {/* Service name */}
       <Field label="Service name" error={errors.name?.message} required>
         <Input
@@ -154,7 +154,7 @@ export function ResourceForm({
         />
       </Field>
 
-      {/* Coordinates (hidden — admin sets these on approval) */}
+      {/* Coordinates */}
       <div className="grid grid-cols-2 gap-3">
         <Field label="Latitude" error={errors.lat?.message}>
           <Input
@@ -203,8 +203,8 @@ export function ResourceForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-xl bg-navy py-3 text-sm font-bold text-white shadow-card
-                   transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="w-full rounded-xl bg-navy py-3 text-sm font-bold text-white
+                   shadow-card transition-opacity hover:opacity-90 disabled:opacity-60"
       >
         {isSubmitting ? "Submitting…" : submitLabel}
       </button>

@@ -1,7 +1,7 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from "react-router";
 import { Clock, MapPin, Phone, Navigation, Star } from "lucide-react";
-import { COST_LABELS, categoryLabel, mapsUrl } from "../lib/kaagapay";
-import { cn } from "../lib/utils";
+import { COST_LABELS, categoryLabel, mapsUrl } from "@/lib/kaagapay";
+import { cn } from "@/lib/utils";
 
 export type ResourceCardProps = {
   id: string;
@@ -34,8 +34,7 @@ export function ResourceCard(props: ResourceCardProps) {
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <Link
-          to="/resources/$id"
-          params={{ id }}
+          to={`/resources/${id}`}
           className={cn(
             "font-bold leading-snug text-foreground hover:text-navy",
             compact ? "text-sm" : "text-base",
