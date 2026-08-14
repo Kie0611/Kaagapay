@@ -1,86 +1,136 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-@theme {
-  /* Philippine flag palette */
-  --color-navy:     #0b2d6e;
-  --color-red:      #ce1127;
-  --color-gold:     #f7a800;
+@custom-variant dark (&:is(.dark *));
 
-  /* Semantic colors — these become bg-background, text-foreground, etc. */
-  --color-background:       #f4f6fa;
-  --color-foreground:       #1a1a2e;
-  --color-card:             #ffffff;
-  --color-card-foreground:  #1a1a2e;
-  --color-border:           #e5e7eb;
-  --color-muted-foreground: #6b7280;
-  --color-secondary:        #f0f2f7;
-  --color-destructive:      #b91c1c;
-  --color-primary-foreground: #ffffff;
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-navy: var(--navy);
+  --color-flagred: var(--flag-red);
+  --color-gold: var(--gold);
+  --color-success: var(--success);
+  --shadow-card: var(--shadow-card);
+  --shadow-lift: var(--shadow-lift);
 }
 
-/* Flag stripe */
-.flag-stripe {
-  height: 4px;
-  background: linear-gradient(
-    to right,
-    #0b2d6e 0%    33.3%,
-    #ce1127 33.3% 66.6%,
-    #f7a800 66.6% 100%
-  );
+:root {
+  --radius: 0.75rem;
+  --background: oklch(0.972 0.006 264);
+  --foreground: oklch(0.218 0.037 279);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.218 0.037 279);
+  --primary: oklch(0.319 0.144 265);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.955 0.008 264);
+  --secondary-foreground: oklch(0.319 0.144 265);
+  --muted: oklch(0.955 0.008 264);
+  --muted-foreground: oklch(0.551 0.021 264);
+  --accent: oklch(0.796 0.163 71);
+  --accent-foreground: oklch(0.218 0.037 279);
+  --destructive: oklch(0.508 0.213 27.6);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.912 0.011 264);
+  --input: oklch(0.912 0.011 264);
+  --ring: oklch(0.319 0.144 265);
+
+  --navy: #0b2d6e;
+  --flag-red: #ce1127;
+  --gold: #f7a800;
+  --success: oklch(0.55 0.13 155);
+
+  --shadow-card: 0 1px 2px rgba(11, 45, 110, 0.05);
+  --shadow-lift: 0 12px 28px -12px rgba(11, 45, 110, 0.35);
+  --gradient-red: linear-gradient(120deg, #ce1127 0%, #94101f 100%);
+  --gradient-navy: linear-gradient(140deg, #0b2d6e 0%, #143f96 100%);
 }
 
-/* Custom utilities */
-@layer utilities {
-  .gradient-navy {
-    background: linear-gradient(135deg, #0b2d6e 0%, #1a3d8a 100%);
+@layer base {
+  * { border-color: var(--color-border); }
+  html, body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
   }
-  .shadow-card {
-    box-shadow: 0 1px 4px 0 rgb(0 0 0 / 0.06);
-  }
-  .card-lift {
-    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
-  }
-  .card-lift:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgb(11 45 110 / 0.10);
-    border-color: #0b2d6e;
-  }
-  .bg-kaagapay-red {
-    background-color: #ce1127;
-  }
-}
-
-/* Category badges */
-@layer components {
-  .cat-badge {
-    display: inline-block;
-    border-radius: 9999px;
-    padding: 2px 10px;
-    font-size: 10px;
+  h1, h2, h3, h4 {
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    white-space: nowrap;
+    letter-spacing: -0.015em;
   }
-  .cat-health        { background: #eff6ff; color: #1e40af; }
-  .cat-legal_aid     { background: #fffbeb; color: #92400e; }
-  .cat-food_relief   { background: #ecfdf5; color: #065f46; }
-  .cat-livelihood    { background: #f5f3ff; color: #4c1d95; }
-  .cat-mental_health { background: #fef2f2; color: #991b1b; }
-  .cat-education     { background: #f5f3ff; color: #5b21b6; }
-  .cat-housing       { background: #fff7ed; color: #9a3412; }
-  .cat-family        { background: #eff6ff; color: #1e3a8a; }
 }
 
-/* Leaflet overrides */
-.leaflet-container {
-  font-family: 'Inter', system-ui, sans-serif;
-  border-radius: 12px;
+@utility flag-stripe {
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(to right, var(--navy) 0 33.33%, var(--flag-red) 33.33% 66.66%, var(--gold) 66.66% 100%);
 }
-.leaflet-popup-content-wrapper {
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgb(0 0 0 / 0.12);
+
+@utility gradient-red {
+  background-image: var(--gradient-red);
 }
-.leaflet-popup-tip {
-  display: none;
+
+@utility gradient-navy {
+  background-image: var(--gradient-navy);
+}
+
+@utility card-lift {
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  &:hover {
+    border-color: var(--navy);
+    box-shadow: var(--shadow-lift);
+    transform: translateY(-2px);
+  }
+}
+
+.cat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.cat-kalusugan, .cat-health, .cat-pamilya, .cat-family { background: #eef6ff; color: #185fa5; }
+.cat-legal_aid, .cat-pabahay, .cat-housing { background: #fff4e5; color: #8b5a00; }
+.cat-pagkain, .cat-food_relief { background: #edfaf3; color: #1a6b3c; }
+.cat-kabuhayan, .cat-livelihood, .cat-edukasyon, .cat-education { background: #f5eeff; color: #5b2d9e; }
+.cat-mental_health { background: #fff0f0; color: #9b1c1c; }
+
+.leaflet-container { font-family: "Inter", ui-sans-serif, system-ui, sans-serif; z-index: 0; }
+.kg-pin {
+  border-radius: 999px;
+  border: 2.5px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.kg-user-dot {
+  width: 16px; height: 16px; border-radius: 999px;
+  background: #2563eb; border: 3px solid #fff;
+  box-shadow: 0 0 0 0 rgba(37,99,235,0.6);
+  animation: kg-pulse 2s infinite;
+}
+@keyframes kg-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(37,99,235,0.55); }
+  70% { box-shadow: 0 0 0 16px rgba(37,99,235,0); }
+  100% { box-shadow: 0 0 0 0 rgba(37,99,235,0); }
 }
