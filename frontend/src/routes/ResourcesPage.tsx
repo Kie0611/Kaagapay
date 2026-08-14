@@ -1,47 +1,55 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { List, Map as MapIcon } from "lucide-react";
 import { EmptyState, ResourceCard } from "@/components/ResourceCard";
 import { ResourceMap } from "@/components/ResourceMap";
 import { SiteShell } from "@/components/SiteShell";
 import { BARANGAYS, CATEGORIES, SILANG_CENTER, haversineKm, isOpenNow } from "@/lib/kaagapay";
-import type { Resource } from "@/lib/kaagapay";
-
-// Replace with useResources() hook later
-const MOCK_ALL: Resource[] = [];
+import { useResources } from "@/hooks/useResources";
 
 export function ResourcesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const q        = searchParams.get("q") ?? "";
-  const catParam = searchParams.get("category") ?? "";
 
-  const [view, setView]               = useState<"list" | "map">("list");
-  const [categories, setCategories]   = useState<string[]>(catParam ? [catParam] : []);
-  const [barangay, setBarangay]       = useState(searchParams.get("barangay") ?? "");
-  const [freeOnly, setFreeOnly]       = useState(false);
-  const [openNow, setOpenNow]         = useState(false);
+  const qParam        = searchParams.get("q") ?? "";
+  const catParam      = searchParams.get("category") ?? "";
+  const barangayParam = searchParams.get("barangay") ?? "";
+
+  // All state declared before the hook so they're available as hook arguments
+  const [view, setView]             = useState<"list" | "map">("list");
+  const [q, setQ]                   = useState(qParam);
+  const [debouncedQ, setDebouncedQ] = useState(qParam);
+  const [categories, setCategories] = useState<string[]>(catParam ? [catParam] : []);
+  const [barangay, setBarangay]     = useState(barangayParam);
+  const [freeOnly, setFreeOnly]     = useState(false);
+  const [openNow, setOpenNow]       = useState(false);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  const [drawerOpen, setDrawerOpen]   = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const all = MOCK_ALL;
-  const isLoading = false;
+  // Wait 400ms after user stops typing before firing a request
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQ(q), 400);
+    return () => clearTimeout(timer);
+  }, [q]);
 
+  // Hook re-fetches automatically whenever these filter values change
+  const { data: raw = [], isLoading } = useResources({
+    q:        debouncedQ.trim() || undefined,
+    category: categories[0] || undefined,
+    barangay: barangay || undefined,
+    cost:     freeOnly ? "free" : undefined,
+  });
+
+  // openNow filter stays client-side — backend doesn't know the user's local time
+  const filtered = openNow ? raw.filter((r) => isOpenNow(r.hours)) : raw;
+
+  // Distance calculation and sorting
   const origin = userLocation ?? SILANG_CENTER;
-
-  const results = useMemo(() => {
-    const qLower = q.trim().toLowerCase();
-    return all
-      .filter((r) => {
-        if (qLower && !`${r.name} ${r.organization} ${r.description} ${r.barangay}`.toLowerCase().includes(qLower)) return false;
-        if (categories.length && !categories.includes(r.category)) return false;
-        if (barangay && r.barangay !== barangay) return false;
-        if (freeOnly && r.cost !== "free") return false;
-        if (openNow && !isOpenNow(r.hours)) return false;
-        return true;
-      })
-      .map((r) => ({ ...r, distance: haversineKm(origin, [r.lat, r.lng]) }))
-      .sort((a, b) => a.distance - b.distance);
-  }, [all, q, categories, barangay, freeOnly, openNow, origin]);
+  const results = filtered
+    .map((r) => ({
+      ...r,
+      distance: haversineKm(origin, [Number(r.lat), Number(r.lng)]),
+    }))
+    .sort((a, b) => a.distance - b.distance);
 
   function locate() {
     navigator.geolocation?.getCurrentPosition(
@@ -51,10 +59,14 @@ export function ResourcesPage() {
   }
 
   function toggleCategory(value: string) {
-    setCategories((prev) => prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value]);
+    setCategories((prev) =>
+      prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value],
+    );
   }
 
   function clearFilters() {
+    setQ("");
+    setDebouncedQ("");
     setCategories([]);
     setBarangay("");
     setFreeOnly(false);
@@ -66,12 +78,17 @@ export function ResourcesPage() {
     <aside className="rounded-xl border-[1.5px] border-border bg-card p-5 shadow-card">
       <p className="text-sm font-bold text-foreground">Filters</p>
 
-      <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Category</p>
+      <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        Category
+      </p>
       <div className="mt-2 grid gap-1.5">
         {CATEGORIES.map((c) => {
           const Icon = c.icon;
           return (
-            <label key={c.value} className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
+            <label
+              key={c.value}
+              className="flex cursor-pointer items-center gap-2 text-sm text-foreground"
+            >
               <input
                 type="checkbox"
                 checked={categories.includes(c.value)}
@@ -85,7 +102,9 @@ export function ResourcesPage() {
         })}
       </div>
 
-      <p className="mt-5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Barangay</p>
+      <p className="mt-5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        Barangay
+      </p>
       <select
         value={barangay}
         onChange={(e) => setBarangay(e.target.value)}
@@ -100,11 +119,21 @@ export function ResourcesPage() {
       <div className="mt-5 grid gap-2">
         <label className="flex items-center justify-between text-sm font-medium text-foreground">
           Free only
-          <input type="checkbox" checked={freeOnly} onChange={(e) => setFreeOnly(e.target.checked)} className="size-4 accent-navy" />
+          <input
+            type="checkbox"
+            checked={freeOnly}
+            onChange={(e) => setFreeOnly(e.target.checked)}
+            className="size-4 accent-navy"
+          />
         </label>
         <label className="flex items-center justify-between text-sm font-medium text-foreground">
           Open now
-          <input type="checkbox" checked={openNow} onChange={(e) => setOpenNow(e.target.checked)} className="size-4 accent-navy" />
+          <input
+            type="checkbox"
+            checked={openNow}
+            onChange={(e) => setOpenNow(e.target.checked)}
+            className="size-4 accent-navy"
+          />
         </label>
       </div>
 
@@ -135,7 +164,9 @@ export function ResourcesPage() {
                 type="button"
                 onClick={() => setView(v)}
                 className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors ${
-                  view === v ? "bg-navy text-primary-foreground" : "text-muted-foreground hover:text-navy"
+                  view === v
+                    ? "bg-navy text-primary-foreground"
+                    : "text-muted-foreground hover:text-navy"
                 }`}
               >
                 {v === "list" ? <List className="size-3.5" /> : <MapIcon className="size-3.5" />}
@@ -148,7 +179,7 @@ export function ResourcesPage() {
         <div className="mt-6">
           <input
             value={q}
-            onChange={(e) => setSearchParams((prev) => { const next = new URLSearchParams(prev); next.set("q", e.target.value); return next; })}
+            onChange={(e) => setQ(e.target.value)}
             placeholder="Search services, organizations, or barangays..."
             className="w-full rounded-lg border border-input bg-card px-4 py-3 text-sm outline-none focus:border-navy"
           />
@@ -158,10 +189,16 @@ export function ResourcesPage() {
           <div className="mt-6 grid gap-6 lg:grid-cols-[260px_1fr]">
             <div>{filters}</div>
             <div>
-              {results.length === 0 && !isLoading ? (
+              {isLoading ? (
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="h-48 animate-pulse rounded-xl bg-secondary" />
+                  ))}
+                </div>
+              ) : results.length === 0 ? (
                 <EmptyState
                   title="No services found"
-                  message="Try removing some filters or searching with different keywords. You can also submit a new resource."
+                  message="Try removing some filters or searching with different keywords."
                 />
               ) : (
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">

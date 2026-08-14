@@ -4,21 +4,19 @@ import { Search } from "lucide-react";
 import { ResourceCard } from "@/components/ResourceCard";
 import { SiteShell, SunWatermark } from "@/components/SiteShell";
 import { BARANGAYS, CATEGORIES } from "@/lib/kaagapay";
-import type { Resource } from "@/lib/kaagapay";
-
-// Replace with useResources() hook later
-const MOCK_RESOURCES: Resource[] = [];
+import { useResources, useCategories } from "@/hooks/useResources";
 
 export function HomePage() {
   const navigate = useNavigate();
-  const resources = MOCK_RESOURCES;
+  const { data: resources = [], isLoading } = useResources();
+  const { data: categoriesWithCount = [] } = useCategories();
   const [q, setQ] = useState("");
   const [category, setCategory] = useState("");
   const [barangay, setBarangay] = useState("");
 
   const counts = CATEGORIES.map((c) => ({
     ...c,
-    count: resources.filter((r) => r.category === c.value).length,
+    count: categoriesWithCount.find((cc) => cc.category === c.value)?.count ?? 0,
   }));
 
   function search(e: React.FormEvent) {
@@ -135,11 +133,23 @@ export function HomePage() {
             View all →
           </Link>
         </div>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {resources.slice(0, 6).map((r) => (
-            <ResourceCard key={r.id} {...r} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="h-48 animate-pulse rounded-xl bg-secondary" />
+            ))}
+          </div>
+        ) : resources.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-border bg-card py-16 text-center">
+            <p className="text-sm text-muted-foreground">No resources yet — check back soon.</p>
+          </div>
+        ) : (
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {resources.slice(0, 6).map((r) => (
+              <ResourceCard key={r.id} {...r} />
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="mx-auto w-full max-w-7xl px-4 pb-16">
