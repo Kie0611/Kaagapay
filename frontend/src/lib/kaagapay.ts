@@ -1,15 +1,15 @@
 import { z } from "zod";
+import { Heart, Scale, ShoppingBasket, Briefcase, Brain, BookOpen, Home, Users } from "lucide-react";
 
-// Categories 
 export const CATEGORIES = [
-  { value: "health",       label: "Health",             emoji: "🏥", pin: "#185fa5" },
-  { value: "legal_aid",    label: "Legal Aid",          emoji: "⚖️", pin: "#8b5a00" },
-  { value: "food_relief",  label: "Food & Relief",      emoji: "🍚", pin: "#1a6b3c" },
-  { value: "livelihood",   label: "Livelihood",         emoji: "💼", pin: "#5b2d9e" },
-  { value: "mental_health",label: "Mental Health",      emoji: "🧠", pin: "#9b1c1c" },
-  { value: "education",    label: "Education",          emoji: "📚", pin: "#7c3aed" },
-  { value: "housing",      label: "Housing",            emoji: "🏠", pin: "#b45309" },
-  { value: "family",       label: "Children & Family",  emoji: "👨‍👩‍👧", pin: "#2563eb" },
+  { value: "health",        label: "Health",           icon: Heart,         pin: "#185fa5" },
+  { value: "legal_aid",     label: "Legal Aid",         icon: Scale,         pin: "#8b5a00" },
+  { value: "food_relief",   label: "Food & Relief",     icon: ShoppingBasket,pin: "#1a6b3c" },
+  { value: "livelihood",    label: "Livelihood",        icon: Briefcase,     pin: "#5b2d9e" },
+  { value: "mental_health", label: "Mental Health",     icon: Brain,         pin: "#9b1c1c" },
+  { value: "education",     label: "Education",         icon: BookOpen,      pin: "#7c3aed" },
+  { value: "housing",       label: "Housing",           icon: Home,          pin: "#b45309" },
+  { value: "family",        label: "Children & Family", icon: Users,         pin: "#2563eb" },
 ] as const;
 
 export type CategoryValue = (typeof CATEGORIES)[number]["value"];
@@ -22,8 +22,8 @@ export const CATEGORY_VALUES = CATEGORIES.map((c) => c.value) as [
 export function categoryLabel(value: string) {
   return CATEGORIES.find((c) => c.value === value)?.label ?? value;
 }
-export function categoryEmoji(value: string) {
-  return CATEGORIES.find((c) => c.value === value)?.emoji ?? "📍";
+export function categoryIcon(value: string) {
+  return CATEGORIES.find((c) => c.value === value)?.icon ?? Heart;
 }
 export function categoryPinColor(value: string) {
   return CATEGORIES.find((c) => c.value === value)?.pin ?? "#0b2d6e";
