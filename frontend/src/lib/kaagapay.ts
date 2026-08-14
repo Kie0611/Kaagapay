@@ -80,8 +80,8 @@ export type Resource = {
   cost: "free" | "with_fee" | "depends";
   description: string;
   website: string | null;
-  lat: number;
-  lng: number;
+  lat: number | string;
+  lng: number | string;
   status: "active" | "inactive" | "pending" | "rejected";
   verified: boolean;
   submitter_name: string | null;

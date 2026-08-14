@@ -13,8 +13,8 @@ export type ResourceCardProps = {
   hours: string;
   cost: string;
   phone: string;
-  lat: number;
-  lng: number;
+  lat: number | string;
+  lng: number | string;
   compact?: boolean;
 };
 
