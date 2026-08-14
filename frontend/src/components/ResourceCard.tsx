@@ -1,5 +1,5 @@
-import { Link } from "react-router";
-import { Clock, MapPin, Phone, Navigation, Star } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Clock, MapPin, Phone, Navigation, Star, SearchX } from "lucide-react";
 import { COST_LABELS, categoryLabel, mapsUrl } from "@/lib/kaagapay";
 import { cn } from "@/lib/utils";
 
@@ -19,10 +19,7 @@ export type ResourceCardProps = {
 };
 
 export function ResourceCard(props: ResourceCardProps) {
-  const {
-    id, name, organization, category, barangay,
-    distance, hours, cost, phone, lat, lng, compact,
-  } = props;
+  const { id, name, organization, category, barangay, distance, hours, cost, phone, lat, lng, compact } = props;
 
   return (
     <article
@@ -31,33 +28,23 @@ export function ResourceCard(props: ResourceCardProps) {
         compact ? "p-3.5" : "p-5",
       )}
     >
-      {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <Link
           to={`/resources/${id}`}
-          className={cn(
-            "font-bold leading-snug text-foreground hover:text-navy",
-            compact ? "text-sm" : "text-base",
-          )}
+          className={cn("font-bold leading-snug text-foreground hover:text-navy", compact ? "text-sm" : "text-base")}
         >
           {name}
         </Link>
-        <span className={cn("cat-badge", `cat-${category}`)}>
-          {categoryLabel(category)}
-        </span>
+        <span className={cn("cat-badge", `cat-${category}`)}>{categoryLabel(category)}</span>
       </div>
 
-      {/* Organization */}
       <p className="mt-1 text-xs font-medium text-muted-foreground">{organization}</p>
 
-      {/* Meta */}
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
         <span className="inline-flex items-center gap-1.5">
           <MapPin className="size-3.5 text-navy" />
           {barangay}
-          {typeof distance === "number" && (
-            <span className="text-navy">· {distance.toFixed(1)} km</span>
-          )}
+          {typeof distance === "number" && <span className="text-navy">· {distance.toFixed(1)} km</span>}
         </span>
         <span className="inline-flex items-center gap-1.5">
           <Clock className="size-3.5 text-navy" />
@@ -69,7 +56,6 @@ export function ResourceCard(props: ResourceCardProps) {
         </span>
       </div>
 
-      {/* Actions */}
       <div className="mt-4 flex gap-2">
         <a
           href={`tel:${phone}`}
@@ -93,7 +79,7 @@ export function ResourceCard(props: ResourceCardProps) {
 export function EmptyState({ title, message }: { title: string; message: string }) {
   return (
     <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card px-6 py-16 text-center">
-      <div className="mb-3 text-4xl">🔍</div>
+      <SearchX className="mb-3 size-10 text-muted-foreground" />
       <p className="font-bold text-foreground">{title}</p>
       <p className="mt-1 max-w-sm text-sm text-muted-foreground">{message}</p>
     </div>

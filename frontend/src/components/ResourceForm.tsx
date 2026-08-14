@@ -1,66 +1,98 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { resourceSchema, type ResourceInput, CATEGORIES, BARANGAYS } from "@/lib/kaagapay";
-import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { BARANGAYS, CATEGORIES, SILANG_CENTER, resourceSchema } from "@/lib/kaagapay";
+import type { ResourceInput } from "@/lib/kaagapay";
 
-interface ResourceFormProps {
-  defaultValues?: Partial<ResourceInput>;
-  onSubmit: (data: any) => void;
-  isSubmitting?: boolean;
+export const emptyResource: ResourceInput = {
+  name: "",
+  organization: "",
+  category: "health",
+  address: "",
+  barangay: "",
+  phone: "",
+  hours: "",
+  cost: "free",
+  description: "",
+  lat: SILANG_CENTER[0],
+  lng: SILANG_CENTER[1],
+  submitter_name: "",
+  submitter_email: "",
+};
+
+type Props = {
+  initial?: ResourceInput;
+  onSubmit: (values: ResourceInput) => Promise<void> | void;
+  submitting?: boolean;
   submitLabel?: string;
+  showSubmitter?: boolean;
+};
+
+const inputClass =
+  "w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none focus:border-navy";
+
+function Field({
+  name,
+  label,
+  errors,
+  children,
+}: {
+  name: string;
+  label: string;
+  errors: Record<string, string>;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-xs font-semibold text-foreground">{label}</span>
+      {children}
+      {errors[name] && <span className="mt-1 block text-xs font-medium text-flagred">{errors[name]}</span>}
+    </label>
+  );
 }
 
 export function ResourceForm({
-  defaultValues,
+  initial = emptyResource,
   onSubmit,
-  isSubmitting = false,
+  submitting,
   submitLabel = "Submit Resource",
-}: ResourceFormProps) {
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm<ResourceInput>({
-    resolver: zodResolver(resourceSchema) as any,
-    defaultValues: { cost: "free", ...defaultValues },
-  });
+  showSubmitter = true,
+}: Props) {
+  const [values, setValues] = useState<ResourceInput>(initial);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const cost = watch("cost");
+  function set<K extends keyof ResourceInput>(key: K, value: ResourceInput[K]) {
+    setValues((v) => ({ ...v, [key]: value }));
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const parsed = resourceSchema.safeParse(values);
+    if (!parsed.success) {
+      const next: Record<string, string> = {};
+      parsed.error.issues.forEach((i) => {
+        const key = String(i.path[0]);
+        if (!next[key]) next[key] = i.message;
+      });
+      setErrors(next);
+      return;
+    }
+    setErrors({});
+    await onSubmit(parsed.data);
+  }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
+      <div className="sm:col-span-2">
+        <Field errors={errors} name="name" label="Service name">
+          <input className={inputClass} value={values.name} onChange={(e) => set("name", e.target.value)} />
+        </Field>
+      </div>
 
-      {/* Service name */}
-      <Field label="Service name" error={errors.name?.message} required>
-        <Input
-          {...register("name")}
-          placeholder="e.g. Silang Rural Health Unit"
-          error={!!errors.name}
-        />
+      <Field errors={errors} name="organization" label="Organization / agency">
+        <input className={inputClass} value={values.organization} onChange={(e) => set("organization", e.target.value)} />
       </Field>
 
-      {/* Organization */}
-      <Field label="Organization / agency" error={errors.organization?.message} required>
-        <Input
-          {...register("organization")}
-          placeholder="e.g. LGU Silang"
-          error={!!errors.organization}
-        />
-      </Field>
-
-      {/* Category */}
-      <Field label="Category" error={errors.category?.message} required>
-        <select
-          {...register("category")}
-          className={cn(
-            "w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none",
-            "focus:border-navy focus:ring-1 focus:ring-navy",
-            errors.category && "border-destructive",
-          )}
-        >
-          <option value="">Select a category</option>
+      <Field errors={errors} name="category" label="Category">
+        <select className={inputClass} value={values.category} onChange={(e) => set("category", e.target.value as ResourceInput["category"])}>
           {CATEGORIES.map((c) => (
             <option key={c.value} value={c.value}>
               {c.emoji} {c.label}
@@ -69,188 +101,96 @@ export function ResourceForm({
         </select>
       </Field>
 
-      {/* Address */}
-      <Field label="Address" error={errors.address?.message} required>
-        <Input
-          {...register("address")}
-          placeholder="e.g. Barangay Biga, Silang, Cavite"
-          error={!!errors.address}
-        />
-      </Field>
+      <div className="sm:col-span-2">
+        <Field errors={errors} name="address" label="Address">
+          <input className={inputClass} value={values.address} onChange={(e) => set("address", e.target.value)} />
+        </Field>
+      </div>
 
-      {/* Barangay */}
-      <Field label="Barangay" error={errors.barangay?.message} required>
-        <select
-          {...register("barangay")}
-          className={cn(
-            "w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none",
-            "focus:border-navy focus:ring-1 focus:ring-navy",
-            errors.barangay && "border-destructive",
-          )}
-        >
-          <option value="">Select a barangay</option>
+      <Field errors={errors} name="barangay" label="Barangay">
+        <input
+          list="kg-barangays"
+          className={inputClass}
+          value={values.barangay}
+          onChange={(e) => set("barangay", e.target.value)}
+        />
+        <datalist id="kg-barangays">
           {BARANGAYS.map((b) => (
-            <option key={b} value={b}>
-              {b}
-            </option>
+            <option key={b} value={b} />
           ))}
-        </select>
+        </datalist>
       </Field>
 
-      {/* Phone */}
-      <Field label="Phone number" error={errors.phone?.message} required>
-        <Input
-          {...register("phone")}
-          type="tel"
-          placeholder="e.g. (046) 686-0019 or 0917-800-1123"
-          error={!!errors.phone}
-        />
+      <Field errors={errors} name="phone" label="Phone number">
+        <input className={inputClass} value={values.phone} onChange={(e) => set("phone", e.target.value)} />
       </Field>
 
-      {/* Hours */}
-      <Field label="Operating hours" error={errors.hours?.message} required>
-        <Input
-          {...register("hours")}
+      <Field errors={errors} name="hours" label="Operating hours">
+        <input
+          className={inputClass}
           placeholder="Monday–Friday 8AM–5PM"
-          error={!!errors.hours}
+          value={values.hours}
+          onChange={(e) => set("hours", e.target.value)}
         />
       </Field>
 
-      {/* Cost toggle */}
-      <Field label="Cost" error={errors.cost?.message} required>
+      <Field errors={errors} name="cost" label="Cost">
         <div className="flex gap-2">
-          {(["free", "with_fee", "depends"] as const).map((val) => {
-            const labels = { free: "Free", with_fee: "With fee", depends: "Depends" };
-            return (
-              <button
-                key={val}
-                type="button"
-                onClick={() => setValue("cost", val)}
-                className={cn(
-                  "flex-1 rounded-lg border px-3 py-2 text-sm font-semibold transition-colors",
-                  cost === val
-                    ? "border-navy bg-navy text-white"
-                    : "border-border bg-secondary text-muted-foreground hover:border-navy/50",
-                )}
-              >
-                {labels[val]}
-              </button>
-            );
-          })}
+          {(["free", "with_fee", "depends"] as const).map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => set("cost", c)}
+              className={`flex-1 rounded-lg border px-3 py-2 text-xs font-semibold transition-colors ${
+                values.cost === c
+                  ? "border-navy bg-navy text-primary-foreground"
+                  : "border-border bg-secondary text-navy hover:bg-border/60"
+              }`}
+            >
+              {c === "free" ? "Free" : c === "with_fee" ? "With fee" : "Depends"}
+            </button>
+          ))}
         </div>
       </Field>
 
-      {/* Description */}
-      <Field label="Description" error={errors.description?.message} required>
-        <textarea
-          {...register("description")}
-          rows={3}
-          placeholder="Briefly describe the service and who it's for."
-          className={cn(
-            "w-full resize-none rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none",
-            "focus:border-navy focus:ring-1 focus:ring-navy",
-            errors.description && "border-destructive",
-          )}
-        />
-      </Field>
-
-      {/* Coordinates */}
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="Latitude" error={errors.lat?.message}>
-          <Input
-            {...register("lat")}
-            type="number"
-            step="any"
-            placeholder="14.2273"
-            error={!!errors.lat}
-          />
-        </Field>
-        <Field label="Longitude" error={errors.lng?.message}>
-          <Input
-            {...register("lng")}
-            type="number"
-            step="any"
-            placeholder="120.9741"
-            error={!!errors.lng}
+      <div className="sm:col-span-2">
+        <Field errors={errors} name="description" label="Description">
+          <textarea
+            rows={4}
+            className={inputClass}
+            value={values.description}
+            onChange={(e) => set("description", e.target.value)}
           />
         </Field>
       </div>
 
-      <hr className="border-border" />
-
-      {/* Submitter info */}
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        About you (optional)
-      </p>
-
-      <Field label="Your name (optional)" error={errors.submitter_name?.message}>
-        <Input
-          {...register("submitter_name")}
-          placeholder="Juan dela Cruz"
-          error={!!errors.submitter_name}
-        />
+      <Field errors={errors} name="lat" label="Latitude">
+        <input className={inputClass} value={values.lat} onChange={(e) => set("lat", e.target.value as never)} />
+      </Field>
+      <Field errors={errors} name="lng" label="Longitude">
+        <input className={inputClass} value={values.lng} onChange={(e) => set("lng", e.target.value as never)} />
       </Field>
 
-      <Field label="Your email (optional)" error={errors.submitter_email?.message}>
-        <Input
-          {...register("submitter_email")}
-          type="email"
-          placeholder="juan@example.com"
-          error={!!errors.submitter_email}
-        />
-      </Field>
-
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full rounded-xl bg-navy py-3 text-sm font-bold text-white
-                   shadow-card transition-opacity hover:opacity-90 disabled:opacity-60"
-      >
-        {isSubmitting ? "Submitting…" : submitLabel}
-      </button>
-    </form>
-  );
-}
-
-// ─── Primitives ───────────────────────────────────────────────────────────────
-
-function Field({
-  label,
-  error,
-  required,
-  children,
-}: {
-  label: string;
-  error?: string;
-  required?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-sm font-semibold text-foreground">
-        {label}
-        {required && <span className="ml-1 text-destructive">*</span>}
-      </label>
-      {children}
-      {error && <p className="text-xs text-destructive">{error}</p>}
-    </div>
-  );
-}
-
-function Input({
-  error,
-  className,
-  ...props
-}: React.InputHTMLAttributes<HTMLInputElement> & { error?: boolean }) {
-  return (
-    <input
-      {...props}
-      className={cn(
-        "w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none",
-        "focus:border-navy focus:ring-1 focus:ring-navy placeholder:text-muted-foreground/60",
-        error && "border-destructive",
-        className,
+      {showSubmitter && (
+        <>
+          <Field errors={errors} name="submitter_name" label="Your name (optional)">
+            <input className={inputClass} value={values.submitter_name ?? ""} onChange={(e) => set("submitter_name", e.target.value)} />
+          </Field>
+          <Field errors={errors} name="submitter_email" label="Your email (optional)">
+            <input className={inputClass} value={values.submitter_email ?? ""} onChange={(e) => set("submitter_email", e.target.value)} />
+          </Field>
+        </>
       )}
-    />
+
+      <div className="sm:col-span-2">
+        <button
+          type="submit"
+          disabled={submitting}
+          className="w-full rounded-lg bg-navy px-5 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-60"
+        >
+          {submitting ? "Submitting..." : submitLabel}
+        </button>
+      </div>
+    </form>
   );
 }
