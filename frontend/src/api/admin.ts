@@ -7,8 +7,8 @@ import type {
 } from "../types/admin.types";
 
 export async function loginAdmin(credentials: LoginCredentials) {
-  const { data } = await apiClient.post<{token: string}>("/admin/login", credentials);
-  return data;
+  const { data } = await apiClient.post("/admin/login", credentials);
+  return data.data;
 }
 
 export async function fetchAdminResources() {
