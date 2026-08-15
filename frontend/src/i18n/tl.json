@@ -19,6 +19,7 @@
   },
   "categories": {
     "title": "Mga Kategorya",
+    "subtitle": "Piliin ang uri ng tulong na kailangan mo",
     "view_all": "Tingnan lahat →",
     "kalusugan": "Kalusugan",
     "legal_aid": "Legal Aid",
@@ -28,6 +29,10 @@
     "edukasyon": "Edukasyon",
     "pabahay": "Pabahay",
     "pamilya": "Bata at Pamilya"
+  },
+  "services": {
+    "title": "Mga Bagong Serbisyo",
+    "subtitle": "Mga bagong serbisyong idinagdag sa direktoryo"
   },
   "card": {
     "call": "Tumawag",

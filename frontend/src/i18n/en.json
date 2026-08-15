@@ -19,6 +19,7 @@
   },
   "categories": {
     "title": "Categories",
+    "subtitle": "Choose the type of help you need",
     "view_all": "View all →",
     "kalusugan": "Health",
     "legal_aid": "Legal Aid",
@@ -28,6 +29,10 @@
     "edukasyon": "Education",
     "pabahay": "Housing",
     "pamilya": "Children & Family"
+  },
+  "services": {
+    "title": "Latest Services",
+    "subtitle": "Newly added to the directory"
   },
   "card": {
     "call": "Call",
