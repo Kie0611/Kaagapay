@@ -225,6 +225,8 @@ export function ResourcesPage() {
                 resources={results}
                 userLocation={userLocation}
                 onLocate={locate}
+                showControls={true}
+                showLegend={true}
                 className="h-[70vh] overflow-hidden rounded-xl border-[1.5px] border-border bg-card shadow-card"
               />
               <button

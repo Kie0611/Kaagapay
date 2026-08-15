@@ -5,8 +5,10 @@ import { ResourceCard } from "@/components/ResourceCard";
 import { SiteShell, SunWatermark } from "@/components/SiteShell";
 import { BARANGAYS, CATEGORIES } from "@/lib/kaagapay";
 import { useResources, useCategories } from "@/hooks/useResources";
+import { useTranslation } from "react-i18next";
 
 export function HomePage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { data: resources = [], isLoading } = useResources();
   const { data: categoriesWithCount = [] } = useCategories();
@@ -37,24 +39,23 @@ export function HomePage() {
             🇵🇭 Silang, Cavite · Region 4A
           </span>
           <h1 className="mt-5 max-w-3xl text-4xl leading-tight text-foreground sm:text-5xl">
-            Find the help you need, right now
+            {t("hero.title")}
           </h1>
           <p className="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
-            A community directory of free and affordable services — health, legal aid, food,
-            livelihood, and more. Connect with the right agency in just a few clicks.
+            {t("hero.subtitle")}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               to="/resources"
               className="rounded-lg bg-navy px-5 py-3 text-sm font-semibold text-primary-foreground shadow-card hover:opacity-90"
             >
-              Search for Help
+              {t("hero.cta_search")}
             </Link>
             <Link
               to="/about"
               className="rounded-lg border border-border bg-card px-5 py-3 text-sm font-semibold text-navy hover:bg-secondary"
             >
-              Learn More
+              {t("hero.cta_learn")}
             </Link>
           </div>
         </div>
@@ -68,7 +69,7 @@ export function HomePage() {
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="What kind of help are you looking for?"
+            placeholder={t("search.placeholder")}
             className="rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none focus:border-navy"
           />
           <select
@@ -97,14 +98,14 @@ export function HomePage() {
             type="submit"
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-navy px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90"
           >
-            <Search className="size-4" /> Search
+            <Search className="size-4" /> {t("search.button")}
           </button>
         </form>
       </section>
 
       <section className="mx-auto w-full max-w-7xl px-4 py-14">
-        <h2 className="text-2xl text-foreground">Service Categories</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Choose the type of help you need.</p>
+        <h2 className="text-2xl text-foreground">{t("categories.title")}</h2>
+        <p className="mt-1 text-sm text-muted-foreground">{t("categories.subtitle")}</p>
         <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {counts.map((c) => {
             const Icon = c.icon;
@@ -126,11 +127,11 @@ export function HomePage() {
       <section className="mx-auto w-full max-w-7xl px-4 pb-14">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <h2 className="text-2xl text-foreground">Latest Services</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Newly added to the directory.</p>
+            <h2 className="text-2xl text-foreground">{t("services.title")}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">{t("services.subtitle")}</p>
           </div>
           <Link to="/resources" className="text-sm font-semibold text-navy hover:text-flagred">
-            View all →
+            {t("categories.view_all")}
           </Link>
         </div>
         {isLoading ? (
@@ -155,16 +156,16 @@ export function HomePage() {
       <section className="mx-auto w-full max-w-7xl px-4 pb-16">
         <div className="gradient-red flex flex-col items-start gap-4 rounded-xl px-6 py-10 text-white sm:flex-row sm:items-center sm:justify-between sm:px-10">
           <div>
-            <h2 className="text-2xl text-white">Know a service we don&apos;t have yet?</h2>
+            <h2 className="text-2xl text-white">{t("submit.banner_title")}</h2>
             <p className="mt-2 max-w-xl text-sm text-white/85">
-              Help expand the directory. Submit the details and our volunteer team will review it before publishing.
+              {t("submit.banner_body")}
             </p>
           </div>
           <Link
             to="/submit"
             className="shrink-0 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-flagred hover:bg-white/90"
           >
-            Submit a Resource
+            {t("submit.banner_cta")}
           </Link>
         </div>
       </section>
